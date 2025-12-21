@@ -1,7 +1,10 @@
 {% include 'header.html' %}
 {% include 'nav.html' %}
+{% from 'bootstrap5/form.html' import render_form %}
+
 <!-- Page Header-->
 <header class="masthead" style="background-image: url('{{ post.img_url }}')">
+    {{ ckeditor.load() }}
     <div class="container position-relative px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-7">
@@ -10,7 +13,7 @@
                     <h2 class="subheading">{{ post.subtitle }}</h2>
                     <span class="meta">
                         Posted by
-                        <a href="#!">Ozeri's Blog</a>
+                        <a href="#!">{{ post.author_user.username }}</a>
                         on {{ post.date }}
                     </span>
                 </div>
@@ -25,13 +28,35 @@
     <div class="row gx-4 gx-lg-5 justify-content-center">
       <div class="col-md-10 col-lg-8 col-xl-7">
         {{ post.body|safe }}
+        {% if current_user.id == 1 %}
+          <div class="d-flex justify-content-end mb-4">
+            <a
+              class="btn btn-primary float-right"
+              href="{{ url_for('edit_post', post_id=post.id) }}"
+              >Edit Post</a
+            >
+          </div>
+        {% endif %}
 
-        <div class="d-flex justify-content-end mb-4">
-          <a
-            class="btn btn-primary float-right"
-            href="{{ url_for('edit_post', post_id=post.id) }}"
-            >Edit Post</a
-          >
+        <!-- Comments Area -->
+        <div class="comment">
+            {{ render_form(form, novalidate=True) | safe }}
+            {{ ckeditor.load() }}
+            {{ ckeditor.config(name='body') }}
+          
+          <ul class="commentList">
+            {% for comment in comments %}
+              <li>
+                <div class="commenterImage">
+                  <img src="{{ gravatar(comment.author_user.email) }}" />
+                </div>
+                <div class="commentText">
+                  {{ comment.text|safe }}
+                  <span class="date sub-text">{{ comment.author_user.username }}</span>
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
         </div>
       </div>
     </div>
