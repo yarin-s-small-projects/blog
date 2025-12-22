@@ -12,20 +12,22 @@ from flask_login import login_user, LoginManager, login_required, current_user, 
 
 dotenv.load_dotenv()
 
+# Load environment variables
 SECRET_KEY = os.getenv("SECRET_KEY")
 SENDER_EMAIL = os.getenv("SENDER_EMAIL")
 PASSWORD = os.getenv("PASSWORD")
 RECIVER_EMAIL = os.getenv("RECIVER_EMAIL")
 DB_URI = os.getenv("DB_URI")
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = SECRET_KEY
-Bootstrap5(app)
-ckeditor.init_app(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI
-db.init_app(app)
-login_manager = LoginManager()
-login_manager.init_app(app)
+# Initialize Flask app and extensions
+app = Flask(__name__) # Create Flask application instance
+app.config['SECRET_KEY'] = SECRET_KEY # Set secret key for session management
+Bootstrap5(app) # Initialize Bootstrap5 for styling
+ckeditor.init_app(app) # Initialize CKEditor for rich text editing
+app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI # Configure database URI
+db.init_app(app) # Initialize SQLAlchemy with the Flask app
+login_manager = LoginManager() # Create LoginManager instance
+login_manager.init_app(app) # Initialize LoginManager with the Flask app
 gravatar = Gravatar(app,
                     size=100,
                     rating='g',
@@ -33,7 +35,7 @@ gravatar = Gravatar(app,
                     force_default=False,
                     force_lower=False,
                     use_ssl=False,
-                    base_url=None)
+                    base_url=None) # Initialize Gravatar for user avatars
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -223,4 +225,4 @@ def logout():
 
 if __name__ == "__main__":
     '''Run the Flask application.'''
-    app.run(debug=True)
+    app.run(debug=False)
